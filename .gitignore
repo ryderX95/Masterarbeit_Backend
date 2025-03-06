@@ -1,0 +1,53 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+*.out
+
+# OS/System files
+.DS_Store
+Thumbs.db
+
+# Python virtual environment & compiled files
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables
+.env
+
+# Frontend build artifacts
+frontend/dist/
+frontend/.next/
+frontend/out/
+frontend/.parcel-cache/
+frontend/.vite/
+
+# Backend dependencies
+backend/__pycache__/
+backend/*.sqlite3
+backend/instance/
+backend/.env
+
+# GPT-4-All (ignore the entire directory)
+backend/gpt4all/
+backend/gpt4all/*
+
+# Ignore compressed and temporary files
+*.zip
+*.tar.gz
+*.tmp
+
+# Ignore large files and unnecessary directories
+backend/gpt4all/
+*.zip
+*.dll
+*.exe
+*.gguf
+*.qml
+
