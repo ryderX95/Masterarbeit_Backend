@@ -2,7 +2,7 @@ import os  # ✅ Fix the missing import
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
-from database.database import db
+from database.database import db, init_models
 from config.config import Config
 from routes.auth import auth_bp
 from routes.challenges import challenges_bp
@@ -10,12 +10,25 @@ from routes.chat import chat_bp
 from sqlalchemy import inspect
 from flask_migrate import Migrate
 from gpt4all import GPT4All  # ✅ Import GPT4All
+from routes.leaderboard import leaderboard_bp  # ✅ Import leaderboard
+
 
 app = Flask(__name__)
+
+# Use your actual PostgreSQL URL here
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:miciamoluca@localhost:5432/postgres"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 app.config.from_object(Config)
 CORS(app)
 jwt = JWTManager(app)
 db.init_app(app)
+
+# ✅ Initialize models inside app context
+with app.app_context():
+    init_models()
+    db.create_all()  # ✅ Ensure all tables are created
+
 migrate = Migrate(app, db)
 
 # ✅ Load GPT4All Model (Disable CUDA to avoid errors)
@@ -30,6 +43,8 @@ except Exception as e:
 # ✅ Register Routes
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(challenges_bp, url_prefix="/challenges")
+app.register_blueprint(leaderboard_bp, url_prefix="/leaderboard")  # ✅ Register leaderboard API
+
 
 # ✅ Protected Chat Route
 @app.route("/chat", methods=["POST"])

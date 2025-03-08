@@ -12,10 +12,23 @@ gpt_model = GPT4All(MODEL_PATH)
 @chat_bp.route("/chat", methods=["POST"])
 @jwt_required()
 def chat():
-    user_input = request.json.get("message")
-    if not user_input:
-        return jsonify({"response": "Please enter a message."}), 400
+    try:
+        user_input = request.json.get("message", "").strip()
 
-    # Generate response
-    response = gpt_model.generate(user_input)
-    return jsonify({"response": response})
+        if not user_input:
+            return jsonify({"error": "Empty message received"}), 400
+
+        # Ensure chatbot responds concisely in English
+        prompt = (
+            "You are a helpful AI chatbot that always responds in English. "
+            "Keep responses concise and clear. "
+            f"User: {user_input}\n"
+            "Chatbot:"
+        )
+
+        response = gpt_model.generate(prompt, max_tokens=100)  # Limiting response length
+
+        return jsonify({"response": response.strip()})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
