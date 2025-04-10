@@ -1,0 +1,264 @@
+--- Chunk 1 ---
+File: src/scenes/tasks/AuthenticationEnumeration.tsx
+
+JSX Text:
+Authentication Enumeration
+Think of yourself as a digital detective. It's not just about picking up clues—it's about understanding what these clues reveal about the security of a system. 
+                This is essentially what authentication enumeration involves. It's like piecing together a puzzle rather than just ticking off items on a checklist.
+Authentication enumeration is like peeling back the layers of an onion. You remove each layer of a system's security to reveal the real operations underneath. 
+                It's not just about routine checks; it's about seeing how everything is connected.
+Identifying Valid Usernames
+Knowing a valid username lets an attacker focus just on the password. You can figure out usernames in different ways, like observing how the application responds during login or password resets. 
+                For example, error messages that specify
+"this account doesn't exist"
+or
+"incorrect password"
+can hint at valid usernames, making an attacker's job easier.
+Password Policies
+The guidelines when creating passwords can provide valuable insights into the complexity of the passwords used in an application. 
+                By understanding these policies, an attacker can gauge the potential complexity of the passwords and tailor their strategy accordingly.
+In the above example, if the supplied password doesn't satisfy the policy defined in the pattern variable, the application will return an error message revealing the regex code requirement. 
+                An attacker might generate a dictionary that satisfies this policy.
+Common Places to Enumerate
+Registration Pages:
+Attackers exploit the feedback about whether a username or email is already taken to compile a list of active users.
+Password Reset Features:
+Applications may unintentionally confirm whether a username exists through different error messages.
+Verbose Errors:
+Differentiating between "username not found" and "incorrect password" can help attackers identify valid usernames.
+Data Breach Information:
+Attackers test usernames from previous breaches, hoping users reuse credentials across different platforms.
+Answer the Question
+What type of error messages can help an attacker identify valid usernames?
+Submit
+✅ Task Completed!
+Comments:
+Title
+Description
+Section: Identifying Valid Usernames
+Section: Password Policies
+Code Block
+Example1
+Section: Common Places to Enumerate
+Task Completion Section
+Input & Button (Aligned)
+Feedback Message
+Success Message
+
+--- Chunk 2 ---
+File: src/scenes/tasks/BasicAuth.tsx
+
+JSX Text:
+Basic Authentication in 2024?
+Basic authentication is widely used for securing access to network devices such as routers, requiring only a **username** and **password**.  
+        While simple, it **lacks encryption** and is vulnerable to **brute-force attacks** when weak credentials are used.
+How HTTP Basic Authentication Works
+HTTP Basic Authentication follows **RFC 7617**, which encodes credentials (`username:password`) in **Base64** format and sends them in the HTTP headers:
+Since **Base64 is not encryption**, credentials can be easily **decoded** and exposed if sent over **non-HTTPS** connections.
+Exploiting Basic Authentication
+To demonstrate an attack, navigate to:
+http://enum.thm/labs/basic_auth/
+Step 1: Capture the Authentication Request
+Enter **any** username and password in the authentication prompt.
+Use **Burp Suite** to capture the request.
+Locate the `Authorization` header containing the **Base64-encoded** credentials.
+🔍 Burp Suite Captured Request (Authorization Header)
+Step 2: Brute-Forcing with Burp Suite
+Send the captured request to **Intruder**.
+Use **Payload Processing** to:
+Add `username:password` format.
+Base64 encode each entry.
+Select a **wordlist** (e.g., `500-worst-passwords.txt`).
+Start the attack and look for **Status Code 200** (successful login).
+💻 Burp Suite Intruder Brute-Force Attack
+Step 3: Decode Base64 & Gain Access
+Find the **successful request** (Status Code 200).
+Copy the **Base64-encoded** credentials.
+Decode them using a command or website:
+Use the decoded credentials to **log in** to the application.
+🔓 Successfully Decoded Credentials
+Comments:
+Title
+Description
+Section: How HTTP Basic Auth Works
+Code Block
+Section: Exploiting Basic Authentication
+enum.thm/labs/basic_auth/" className="text-blue-400 underline">
+enum.thm/labs/basic_auth/
+Steps: Capturing Credentials in Burp Suite
+Image Placeholder for Burp Suite Capturing
+Steps: Brute-Forcing Basic Authentication
+Image Placeholder for Burp Suite Attack
+Steps: Decoding Base64 & Gaining Access
+Image Placeholder for Decoded Credentials
+
+--- Chunk 3 ---
+File: src/scenes/tasks/Conclusion.tsx
+
+JSX Text:
+🔚 Conclusion
+Throughout this training, we've explored various aspects of **enumeration and brute-force attacks**, equipping you with both the **theoretical knowledge** and **practical skills** required for security assessments.
+📌 Key Takeaways
+Effective Enumeration:
+Discovering valid users, hidden endpoints, and security misconfigurations is a crucial first step.
+Brute Force Efficiency:
+Using optimized wordlists, understanding rate-limiting, and detecting lockout mechanisms can improve attack efficiency.
+Ethical Responsibility:
+Always perform security testing with **explicit permission** to avoid legal and ethical violations.
+Submit Report
+Restart Training
+Comments:
+Title
+Summary
+Key Takeaways Section
+Action Buttons
+Submit Report Button
+Restart Training Button
+
+--- Chunk 4 ---
+File: src/scenes/tasks/Introduction.tsx
+
+JSX Text:
+Introduction
+Authentication enumeration is a fundamental aspect of security testing, concentrating specifically on the mechanisms that protect sensitive aspects of web applications.
+        This process involves methodically inspecting various authentication components ranging from username validation to password policies and session management.
+        Each of these elements is meticulously tested because they represent potential vulnerabilities that, if exploited, could lead to significant security breaches.
+Objectives
+Understand the significance of enumeration and how it sets the stage for effective brute-force attacks.
+Learn advanced enumeration methods, mainly focusing on extracting information from verbose error messages.
+Comprehend the relationship between enumeration and brute-force attacks in compromising authentication mechanisms.
+Gain practical experience using tools and techniques for both enumeration and brute-force attacks.
+Pre-requisites
+Familiarity with HTTP and HTTPS, including request/response structures and common status codes.
+Experience using tools like Burp Suite.
+Basic proficiency in navigating and using the Linux command line.
+▶
+Start Vulnerable Web App Machine
+Comments:
+Title
+Description
+Objectives
+Pre-requisites
+Buttons Section
+Start Machine Button
+
+--- Chunk 5 ---
+File: src/scenes/tasks/OSINT.tsx
+
+JSX Text:
+Wayback URLs & Google Dorks
+OSINT (**Open-Source Intelligence**) is a powerful technique used to gather information from publicly available sources.
+        Attackers and security professionals use these techniques to **map out** a target’s infrastructure, uncover hidden data, and
+        exploit exposed vulnerabilities.
+⏳ Wayback Machine
+The **Wayback Machine** (
+archive.org/web
+) lets you view **old versions** of websites.  
+        This can reveal **deprecated endpoints, forgotten files, or outdated pages** that might still be accessible on the server.
+🌐 Screenshot of Wayback Machine homepage
+🛠 Using `waybackurls` to Extract Old Links
+We can use the `waybackurls` tool to extract **historical URLs** of a website from the **Wayback Machine**:
+This will output a **list of archived links**, some of which might still be accessible today.
+📜 List of extracted historical URLs
+🔎 Google Dorks
+Google Dorking is a technique used to **search for hidden information** using **advanced Google queries**.
+These queries can reveal **exposed files, misconfigured directories, or sensitive login pages**.
+🔍 Google Dorking Search Results
+Comments:
+Title
+Description
+Section: Wayback Machine
+archive.org/web/" className="text-blue-400 underline">archive.org/web</a>) lets you view **old versions** of websites.
+Screenshot Placeholder for Wayback Machine
+Using WaybackURLs Tool
+Code Block for Installing waybackurls
+github.com/tomnomnom/waybackurls
+Screenshot Placeholder for waybackurls output
+Section: Google Dorking
+Code Block for Google Dorking Examples
+Screenshot Placeholder for Google Dorking
+
+--- Chunk 6 ---
+File: src/scenes/tasks/PasswordReset.tsx
+
+JSX Text:
+Password Reset Flow Vulnerabilities
+The password reset mechanism is essential for user convenience, but its security must be carefully implemented.
+        A poorly secured password reset process can be exploited by attackers to take over accounts.
+Common Password Reset Methods
+Email-Based Reset:
+A reset link is sent via email, requiring secure token generation.
+Security Question-Based Reset:
+Users answer personal questions, but predictable answers can be exploited.
+SMS-Based Reset:
+A code is sent via SMS, which can be intercepted via SIM swapping.
+Common Exploits & Weaknesses
+Predictable Tokens:
+If reset tokens follow a pattern, attackers can brute-force valid reset URLs.
+Token Expiration Issues:
+Long-lived tokens provide a wider attack window for exploitation.
+Insufficient Validation:
+Weak verification mechanisms allow attackers to reset passwords for other users.
+Information Disclosure:
+Error messages revealing whether an email exists help attackers enumerate accounts.
+Insecure Transport:
+Reset links sent over HTTP can be intercepted by network eavesdroppers.
+Exploiting Predictable Tokens
+Some applications generate easily guessable reset tokens, allowing brute-force attacks. The following code example shows
+        a vulnerable password reset function using a **3-digit token**:
+The above code sets a **3-digit** password reset token (`100 - 200`). An attacker can **brute-force** all possible token values to reset an account.
+Brute-Force Attack with Burp Suite
+Navigate to the application's password reset page.
+Enter "admin@admin.com" and submit the form.
+Intercept the response with **Burp Suite**.
+Send the reset request to **Burp Intruder** and configure payloads for token brute-forcing.
+Use **Crunch** to generate token guesses (`100-200`).
+Once the correct token is found, use it to reset the password and take over the account.
+Comments:
+Title
+Description
+Section: Reset Methods
+Section: Attack Techniques
+Section: Exploiting Predictable Tokens
+Code Block
+Section: Brute-Force Attack with Burp Suite
+Code Block for Crunch
+
+--- Chunk 7 ---
+File: src/scenes/tasks/VerboseErrors.tsx
+
+JSX Text:
+Understanding Verbose Errors
+Imagine you're a detective with a knack for spotting clues that others might overlook. In web development, verbose errors are like unintentional whispers of a system, revealing secrets meant to be kept hidden. 
+        These detailed error messages help developers debug issues, but they can also expose sensitive data to attackers.
+Verbose Errors Can Leak Information
+Internal Paths:
+Reveals file paths and directory structures of the server.
+Database Details:
+Exposes database names, table structures, or error responses.
+User Information:
+Can reveal usernames or personal details during login attempts.
+Inducing Verbose Errors
+Attackers provoke verbose errors using various techniques, such as:
+Invalid Login Attempts:
+Different error messages for "invalid username" vs. "wrong password" can reveal valid accounts.
+SQL Injection:
+Entering a single quote (`'`) in a login field might cause an error revealing database schema details.
+File Inclusion/Path Traversal:
+Using `../../` in input fields might disclose restricted file paths.
+Form Manipulation:
+Modifying form parameters can force errors that expose backend logic.
+Application Fuzzing:
+Tools like Burp Suite send various payloads to identify exploitable errors.
+Automation with Python
+Below is a Python script to check for valid emails on a vulnerable web app:
+The script checks an email list against the web app, filtering valid and invalid ones based on error messages.
+Comments:
+Title
+Description
+Section: Information Leaks
+Section: Inducing Verbose Errors
+Section: Automation with Python
+Code Block
+enum.thm/labs/verbose_login/functions.php'
+

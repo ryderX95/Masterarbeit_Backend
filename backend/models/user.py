@@ -2,7 +2,7 @@ from database.database import db
 from datetime import datetime
 
 class User(db.Model):
-    __tablename__ = "users"  # ✅ Explicit table name
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
@@ -10,9 +10,9 @@ class User(db.Model):
     points = db.Column(db.Integer, default=0)
 
 class UserProgress(db.Model):
-    __tablename__ = 'user_progress'  # ✅ Explicit table name
+    __tablename__ = 'user_progress'   
 
-    # ✅ Allow redefinition if table exists
+    # 
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
@@ -22,4 +22,4 @@ class UserProgress(db.Model):
     correct_answers = db.Column(db.Integer, default=0)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user = db.relationship('User', backref=db.backref('progress', lazy=True))  # ✅ Relationship
+    user = db.relationship('User', backref=db.backref('progress', lazy=True)) 

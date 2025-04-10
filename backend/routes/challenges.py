@@ -78,9 +78,8 @@ def update_progress():
     print(f"🔍 User Answer: '{formatted_user_answer}'")
     print(f"🔍 Correct Answer: '{correct_answer}'")
 
-    is_correct = formatted_user_answer == correct_answer  # ✅ Compare normalized values
+    is_correct = formatted_user_answer == correct_answer
 
-    # ✅ Save progress only if correct
     save_progress(user_id, task_id, completed=1 if is_correct else 0, correct_answers=1 if is_correct else 0)
 
     return jsonify({"correct": is_correct, "message": "Answer stored"})

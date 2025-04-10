@@ -1,34 +1,81 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from gpt4all import GPT4All
-import os
+import requests
+import traceback
+import numpy as np
+import faiss
+from sentence_transformers import SentenceTransformer
 
 chat_bp = Blueprint("chat", __name__)
 
-# Load Model (Ensure this path is correct)
-MODEL_PATH = os.getenv("MODEL_PATH", "C:/Users/Timur/AppData/Local/nomic.ai/GPT4All/qwen2.5-coder-7b-instruct-q4_0.gguf")
-gpt_model = GPT4All(MODEL_PATH)
+# LLaMA server endpoint
+LLAMA_SERVER_URL = "http://127.0.0.1:8001/completion"
+
+# Load embedding model once
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Load training chunks from file
+try:
+    with open("training_task_chunks.txt", "r", encoding="utf-8") as f:
+        raw_chunks = f.read().split("--- Chunk ")
+        chunks = ["--- Chunk " + chunk.strip() for chunk in raw_chunks if chunk.strip()]
+except FileNotFoundError:
+    chunks = []
+    print("❌ training_task_chunks.txt not found!")
+
+# Prepare FAISS index
+if chunks:
+    embeddings = embedding_model.encode(chunks)
+    index = faiss.IndexFlatL2(embeddings.shape[1])
+    index.add(np.array(embeddings))
+
+def get_relevant_chunks(query, k=2):
+    """Returns the top-k most relevant chunks for the query."""
+    if not chunks:
+        return []
+    query_vec = embedding_model.encode([query])
+    _, I = index.search(np.array(query_vec), k)
+    return [chunks[i] for i in I[0]]
 
 @chat_bp.route("/chat", methods=["POST"])
 @jwt_required()
 def chat():
     try:
         user_input = request.json.get("message", "").strip()
-
         if not user_input:
             return jsonify({"error": "Empty message received"}), 400
 
-        # Ensure chatbot responds concisely in English
-        prompt = (
-            "You are a helpful AI chatbot that always responds in English. "
-            "Keep responses concise and clear. "
-            f"User: {user_input}\n"
-            "Chatbot:"
-        )
+        # Retrieve RAG context
+        rag_context = "\n\n".join(get_relevant_chunks(user_input))
 
-        response = gpt_model.generate(prompt, max_tokens=100)  # Limiting response length
+        # Format the prompt
+        prompt = f"""### Instruction:
+Use the provided context to answer the question clearly and concisely.
 
-        return jsonify({"response": response.strip()})
-    
+### Context:
+{rag_context}
+
+### Question:
+{user_input}
+
+### Response:"""
+
+        # Send to LLaMA server
+        res = requests.post(LLAMA_SERVER_URL, json={
+            "prompt": prompt,
+            "n_predict": 150,
+            "temperature": 0.7,
+            "top_k": 40,
+            "top_p": 0.9,
+            "stop": ["### Question:", "### Instruction:", "### Response:"]
+        })
+
+        if res.ok:
+            return jsonify({"response": res.json().get("content", "").strip()})
+        else:
+            return jsonify({"error": f"LLM server error: {res.status_code}"}), 500
+
     except Exception as e:
+        print("❌ Chat Error:", str(e))
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
