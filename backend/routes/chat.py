@@ -50,7 +50,7 @@ def chat():
 
         # Format the prompt
         prompt = f"""### Instruction:
-Use the provided context to answer the question clearly and concisely.
+Answer the question using the provided context. Be **very concise** and to the point — use only the minimum necessary words.
 
 ### Context:
 {rag_context}
@@ -63,10 +63,10 @@ Use the provided context to answer the question clearly and concisely.
         # Send to LLaMA server
         res = requests.post(LLAMA_SERVER_URL, json={
             "prompt": prompt,
-            "n_predict": 150,
-            "temperature": 0.7,
-            "top_k": 40,
-            "top_p": 0.9,
+            "n_predict": 40,
+            "temperature": 0.3,
+            "top_k": 20,
+            "top_p": 0.85,
             "stop": ["### Question:", "### Instruction:", "### Response:"]
         })
 

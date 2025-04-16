@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from database.database import db
 from models.user import User
 import bcrypt
@@ -34,3 +34,9 @@ def login():
 
     access_token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
     return jsonify({'token': access_token, 'role': user.role, 'points': user.points})
+
+@auth_bp.route("/verify", methods=["GET"])
+@jwt_required()
+def verify_token():
+    user_id = get_jwt_identity()
+    return jsonify({"valid": True, "user_id": user_id}), 200
