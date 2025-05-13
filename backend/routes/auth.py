@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from database.database import db
-from models.user import User
+from models.user import User 
 import bcrypt
 
 auth_bp = Blueprint("auth", __name__)
@@ -31,7 +31,7 @@ def login():
     user = User.query.filter_by(username=username).first()
     if not user or not bcrypt.checkpw(password.encode(), user.password.encode()):
         return jsonify({'message': 'Invalid credentials'}), 401
-
+        
     access_token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
     return jsonify({'token': access_token, 'role': user.role, 'points': user.points})
 
