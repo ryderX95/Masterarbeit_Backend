@@ -76,9 +76,9 @@ def update_progress():
     correct_answer = TASK_ANSWERS.get(task_id)
     formatted_user_answer = answer.strip().lower()  
     # Debugging Log
-    print(f"🔍 Task ID: {task_id}")
-    print(f"🔍 User Answer: '{formatted_user_answer}'")
-    print(f"🔍 Correct Answer: '{correct_answer}'")
+    print(f"Task ID: {task_id}")
+    print(f"User Answer: '{formatted_user_answer}'")
+    print(f"Correct Answer: '{correct_answer}'")
 
     is_correct = formatted_user_answer == correct_answer
 
